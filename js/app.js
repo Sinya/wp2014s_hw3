@@ -51,7 +51,17 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 
 		
 		loginView:function(t){
-		
+		var check = true;
+
+		 var NowUsr = Parse.User.current();
+	      if(NowUsr) {
+	      	    window.location.hash = 'peer-evaluation/';
+	      	          } 
+
+	     else {
+        document.getElementById('content').innerHTML = temp.loginView();}
+
+
 			document.getElementById("content").innerHTML=temp.loginView();
 			document.getElementById("form-signin-student-id").addEventListener("keyup",function(){
 			
@@ -70,17 +80,7 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 			})			
 
 			////////////////////////////////////////////////////////////////
-
-			var i=function(e,t,n){
-					if( !t() ) { 
-					document.getElementById(e).innerHTML=n;
-					document.getElementById(e).style.display="block"
-				}
-				else{
-					document.getElementById(e).style.display="none"
-				}
-			};
-			
+	
 			var comparePass = function(){
 				var p1=document.getElementById("form-signup-password");
 				var p2=document.getElementById("form-signup-password1");
@@ -90,9 +90,12 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
  			{ 
 				document.getElementById("form-signup-message").innerHTML="打錯惹"
 				document.getElementById("form-signup-message").style.display="block"
+				check = false;
+
 			}
 			else{
 				document.getElementById("form-signup-message").style.display="none"
+				check = true;
 			}
 
 				console.log(result);
@@ -102,47 +105,86 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 			
 
 			document.getElementById("form-signup-student-id").addEventListener("keyup",function(){
-				i("form-signup-message",function(){
-					return TAHelp.getMemberlistOf(document.getElementById("form-signup-student-id").value)  === false?false:true
-				},"你不是這班的唷走錯了")});
+
+				if ( TAHelp.getMemberlistOf(document.getElementById("form-signup-student-id").value)  === false) 
+				
+					{ 
+					document.getElementById("form-signup-message").innerHTML="你不是這班的唷走錯了"
+					document.getElementById("form-signup-message").style.display="block"
+				}
+				else{
+					document.getElementById("form-signup-message").style.display="none"
+
+				}
+
+			});
 
 			document.getElementById("form-signup-password1").addEventListener("keyup",comparePass);
-			
-		 // signin  submit
-        document.getElementById('form-signin').addEventListener('submit', function(){
-          Parse.User.logIn(document.getElementById('form-signin-student-id').value,
-              document.getElementById('form-signin-password').value, {
-            success: function(user) {
-              process.navbar();
-        window.location.hash = 'peer-evaluation/';
-        process.evaluation();
-            },
-            error: function(user, error) {
-              document.getElementById('form-signin-message').style.display = 'block';     
-              document.getElementById('form-signin-message').innerHTML = "你亂打＝口＝";
-            }
-          }); 
-        });
+				
+			 // signin  submit
+	        document.getElementById('form-signin').addEventListener('submit', function(){
+	          Parse.User.logIn(document.getElementById('form-signin-student-id').value,
+	              document.getElementById('form-signin-password').value, {
+	            success: function(user) {
+	              process.navbar();
+	        window.location.hash = 'peer-evaluation/';
+	        process.evaluation();
+	            },
+	            error: function(user, error) {
+	              document.getElementById('form-signin-message').style.display = 'block';     
+	              document.getElementById('form-signin-message').innerHTML = "你亂打＝口＝";
+	            }
+	          }); 
 
-        // signup  submit
-        document.getElementById('form-signup').addEventListener('submit', function(){
-          var user = new Parse.User();
-          user.set("username", document.getElementById('form-signup-student-id').value);
-          user.set("password", document.getElementById('form-signup-password').value);
-          user.set("email", document.getElementById('form-signup-email').value);
- 
-          user.signUp(null, {
-            success: function(user) {
-               process.navbar();
-        window.location.hash = 'peer-evaluation/';
-        process.evaluation();
-            },
-            error: function(user, error) {
-              // Show the error message somewhere and let the user try again.
-              document.getElementById('form-signup-message').style.display = 'block';     
-              document.getElementById('form-signup-message').innerHTML = error.message;
-            }
-          });
+	     
+	        });
+
+	        // signup  submit
+	        document.getElementById('form-signup').addEventListener('submit', function(){
+
+	          var student_id = document.getElementById('form-signup-student-id').value;
+		      if(!TAHelp._isMemberOf(student_id)){
+		        alert('你亂打＝口＝');
+		        window.location.hash = '';
+		      }
+
+			var p1=document.getElementById("form-signup-password");
+				var p2=document.getElementById("form-signup-password1");
+				var result = p1.value === p2.value?true:false;
+
+			if (result) 
+ 			{ 
+      			  window.location.hash = 'login/';
+
+
+				check = false;
+
+			}
+			else{
+				check = true;
+			
+
+				console.log(result);
+
+	          var user = new Parse.User();
+	          user.set("username", document.getElementById('form-signup-student-id').value);
+	          user.set("password", document.getElementById('form-signup-password').value);
+	          user.set("email", document.getElementById('form-signup-email').value);
+	 
+	          user.signUp(null, {
+	            success: function(user) {
+	               process.navbar();
+			       window.location.hash = 'peer-evaluation/';
+			       process.evaluation();
+			    },
+	            error: function(user, error) {
+	              // Show the error message somewhere and let the user try again.
+	              document.getElementById('form-signup-message').style.display = 'block';     
+	              document.getElementById('form-signup-message').innerHTML = error.message;
+	            }
+	          });
+
+	      }
 
 
         });
