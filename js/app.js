@@ -152,9 +152,14 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 				var p2=document.getElementById("form-signup-password1");
 				var result = p1.value === p2.value?true:false;
 
-			if (result) 
+
+console.log(p1.value);
+console.log(p2.value);
+
+			if (p1.value !== p2.value) 
  			{ 
       			  window.location.hash = 'login/';
+		        alert('打錯了！');
 
 
 				check = false;
@@ -162,8 +167,6 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 			}
 			else{
 				check = true;
-			
-
 				console.log(result);
 
 	          var user = new Parse.User();
