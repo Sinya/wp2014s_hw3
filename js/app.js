@@ -12,7 +12,7 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 
 	});
 
-	// 各個view相對應的處理函數
+	// 各個view相對應的處理函數 navbar indexView loginView evaluationView scoreView
 	var process = {
 
 		navbar:function() {
@@ -48,12 +48,11 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 	        window.location.hash = "login/"
 	      } // no login
 	    },
+
 		
 		loginView:function(t){
 		
-
 			document.getElementById("content").innerHTML=temp.loginView();
-
 			document.getElementById("form-signin-student-id").addEventListener("keyup",function(){
 			
 			if ( TAHelp.getMemberlistOf(document.getElementById("form-signin-student-id").value)  === false ) 
@@ -65,7 +64,6 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 			else{
 				document.getElementById("form-signin-message").style.display="block"
 				document.getElementById("form-signin-message").innerHTML="歡迎！" + document.getElementById("form-signin-student-id").value + " : )"
-
 
 			}
 		
@@ -82,32 +80,6 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 					document.getElementById(e).style.display="none"
 				}
 			};
-
-			document.getElementById("form-signin").addEventListener("submit",function(){
-				if(!TAHelp.getMemberlistOf(document.getElementById("form-signin-student-id").value)  === false?false:true){
-					alert("去註冊！");
-					return false
-				}
-				Parse.User.logIn(document.getElementById("form-signin-student-id").value,document.getElementById("form-signin-password").value,
-					{success:function(user){
-					process.navbar();
-					window.location.hash='peer-evaluation/';
-
-					},error:function(user,t){
-				
-						if( true ) { 
-							document.getElementById("form-signin-message").innerHTML="打錯惹";
-							document.getElementById("form-signin-message").style.display="block"
-						}
-						else{
-							document.getElementById("form-signin-message").style.display="none"
-						}
-
-					}
-					}
-				)
-			},false);
-
 			
 			var comparePass = function(){
 				var p1=document.getElementById("form-signup-password");
@@ -136,35 +108,44 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 
 			document.getElementById("form-signup-password1").addEventListener("keyup",comparePass);
 			
-			document.getElementById("form-signup").addEventListener("submit",function(){
-				if(TAHelp.getMemberlistOf(document.getElementById("form-signup-student-id").value)  === false){
-					alert("你亂打＝口＝");
-					return false
-				}
-				var comp=comparePass();
-	
-				if(!comp){
-					return false
-				}
+		 // signin  submit
+        document.getElementById('form-signin').addEventListener('submit', function(){
+          Parse.User.logIn(document.getElementById('form-signin-student-id').value,
+              document.getElementById('form-signin-password').value, {
+            success: function(user) {
+              process.navbar();
+        window.location.hash = 'peer-evaluation/';
+        process.evaluation();
+            },
+            error: function(user, error) {
+              document.getElementById('form-signin-message').style.display = 'block';     
+              document.getElementById('form-signin-message').innerHTML = "你亂打＝口＝";
+            }
+          }); 
+        });
 
-				else {
-			var Usr =new Parse.User;
-			Usr.set("username",document.getElementById("form-signup-student-id").value);
-			Usr.set("password",document.getElementById("form-signup-password").value);
-			Usr.set("email",document.getElementById("form-signup-email").value);
-			}
-			Usr.signUp(null,
-				{success:function(user){
-					process.navbar();
-					window.location.hash='peer-evaluation/';
-				},error:function(user,error){
-					i("form-signup-message",function(){
-						return false
-					},t.message)
-				}
-			}
-			)
-		},false)
+        // signup  submit
+        document.getElementById('form-signup').addEventListener('submit', function(){
+          var user = new Parse.User();
+          user.set("username", document.getElementById('form-signup-student-id').value);
+          user.set("password", document.getElementById('form-signup-password').value);
+          user.set("email", document.getElementById('form-signup-email').value);
+ 
+          user.signUp(null, {
+            success: function(user) {
+               process.navbar();
+        window.location.hash = 'peer-evaluation/';
+        process.evaluation();
+            },
+            error: function(user, error) {
+              // Show the error message somewhere and let the user try again.
+              document.getElementById('form-signup-message').style.display = 'block';     
+              document.getElementById('form-signup-message').innerHTML = error.message;
+            }
+          });
+
+
+        });
 
 
 		},
@@ -187,15 +168,17 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 				{
 					success:function(i){
 					window.EVAL=i;
-					if(i===undefined){
+					if(i===undefined){ // 第一次來
 						console.log(NowUsr);
 
 						var s=TAHelp.getMemberlistOf(NowUsr.get("username")).filter(function(e){
 							return e.StudentId!==NowUsr.get("username")?true:false}).map(function(e)
 							{
 							e.scores=["0","0","0","0"];
-							return e
+							return e // @@
 						})
+						console.log(typeof(s));
+
 					}
 					else{
 						var s = i.toJSON().evaluations
@@ -232,6 +215,8 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 	scoreView: function(){
 	  var Score = Parse.Object.extend("evaluation");
       var query = new Parse.Query(Score);
+
+
          
               document.getElementById("content").innerHTML = "AAA";
           
