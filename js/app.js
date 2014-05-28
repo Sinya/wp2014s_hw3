@@ -125,20 +125,19 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 	        document.getElementById('form-signin').addEventListener('submit', function(){
 	          Parse.User.logIn(document.getElementById('form-signin-student-id').value,
 	              document.getElementById('form-signin-password').value, {
-	            success: function(user) {
-	              process.navbar();
-	        window.location.hash = 'peer-evaluation/';
-	        process.evaluation();
+	            success: function() {
+	            process.navbar();
+	        	window.location.hash = 'peer-evaluation/';
+	        	process.evaluationView();
 	            },
-	            error: function(user, error) {
+	            error: function() {
 	              document.getElementById('form-signin-message').style.display = 'block';     
-	              document.getElementById('form-signin-message').innerHTML = "你亂打＝口＝";
+	              document.getElementById('form-signin-message').innerHTML = "亂打＝口＝";
 	            }
 	          }); 
 
 	     
 	        });
-
 	        // signup  submit
 	        document.getElementById('form-signup').addEventListener('submit', function(){
 
@@ -153,13 +152,13 @@ Parse.initialize("jjVNb0LFUEAP0TPVTpJM53HntiO8okzhepNLvOPp","Og4t2M3680IHqjaVjI6
 				var result = p1.value === p2.value?true:false;
 
 
-console.log(p1.value);
-console.log(p2.value);
+				console.log(p1.value);
+				console.log(p2.value);
 
 			if (p1.value !== p2.value) 
  			{ 
       			  window.location.hash = 'login/';
-		        alert('打錯了！');
+		        alert('打錯了啦！');
 
 
 				check = false;
@@ -178,7 +177,7 @@ console.log(p2.value);
 	            success: function(user) {
 	               process.navbar();
 			       window.location.hash = 'peer-evaluation/';
-			       process.evaluation();
+			       process.evaluationView();
 			    },
 	            error: function(user, error) {
 	              // Show the error message somewhere and let the user try again.
@@ -197,7 +196,8 @@ console.log(p2.value);
 	
 
 		evaluationView: function(){
-			var t=Parse.Object.extend("evaluation");
+			var t=Parse.Object.extend("evaluation"); 
+			// Creates a new subclass of Parse.Object for the given Parse class name.
 			var NowUsr=Parse.User.current();
 			var access=new Parse.ACL;
 			var item = new Parse.Query(t);
@@ -216,8 +216,12 @@ console.log(p2.value);
 					if(i===undefined){ // 第一次來
 						console.log(NowUsr);
 
-						var s=TAHelp.getMemberlistOf(NowUsr.get("username")).filter(function(e){
-							return e.StudentId!==NowUsr.get("username")?true:false}).map(function(e)
+						var s=TAHelp.getMemberlistOf(NowUsr.get("username")).filter(
+							function(e){
+							console.log(e);
+							// except me
+							return e.StudentId!==NowUsr.get("username")?true:false}).map(
+							function(e)
 							{
 							e.scores=["0","0","0","0"];
 							return e // @@
@@ -230,6 +234,7 @@ console.log(p2.value);
 					}
 
 					document.getElementById("content").innerHTML=temp.evaluationView(s); // present 
+					binding();
 					document.getElementById("evaluationForm-submit").value=i === undefined?"送出表單":"修改表單";
 					document.getElementById("evaluationForm").addEventListener("submit",function(){
 						
@@ -258,14 +263,38 @@ console.log(p2.value);
 	// } ;
 
 	scoreView: function(){
-	  var Score = Parse.Object.extend("evaluation");
-      var query = new Parse.Query(Score);
+	  var evaluation = Parse.Object.extend("evaluation");
+	  // Creates a new subclass of Parse.Object for the given Parse class name.
+      var query = new Parse.Query(evaluation);
+ 			
+
+	query.select("evaluations");
+	query.find().then(function(results) {
+    alert("Successfully retrieved " + results.length + " scores.");
 
 
-         
-              document.getElementById("content").innerHTML = "AAA";
-          
-    },
+    var s = results[0].toJSON().evaluations
+              console.log(s);
+		for (var i = 0; i < results.length; i++) { 
+		      var object = results[i];
+		      // alert(object.id + ' - ' + object.get('evaluations'));
+		    
+ 				var object = results[i];
+                // console.log(object.toJSON().evaluations)
+                for (var i = 0; i < s.length; i++) 
+		        alert(s[i].scores)
+		    }
+              // var Allscore = [];
+              for (var i = 0; i < s.length; i++) {
+                   // Allscore[i] += s[i].scores;
+              }
+              // document.getElementById("content").innerHTML = temp.scoreView(Allscore);
+
+          })
+	}
+	
+
+	
   };
 
 	// 設定router及相對應的處理函數

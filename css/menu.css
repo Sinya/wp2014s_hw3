@@ -1,0 +1,51 @@
+#menu{
+  float: right;
+  position: relative;
+  left: -50%;
+  text-align:left;
+}
+#menu ul{
+  position: relative;
+  left: 50%;
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+#menu li {
+  float:left;
+  position: relative;
+  margin: 0 2px 0 0;
+  border-bottom: 0;
+  width:176px;
+  text-align:center;
+}
+#menu li a {
+  text-decoration:none;
+  display:block;
+  padding: 8px 15px;
+  color: #ffffff;
+  font: 20px 'Trebuchet MS', Trebuchet, sans-serif;
+  border-radius: 10px 10px 0 0;
+  background-color: #1A5960;
+}
+#menu li a:hover {
+  background-color: #CBE4EA;
+  color: #4b5394;
+}
+#txt_cont{
+  position:relative;
+  width: 100%;
+  font: 20px 'Trebuchet MS', Trebuchet, sans-serif;
+  line-height:35px;
+  border:1px solid #ccc;
+  border-top: 0;
+  text-align: left;
+  /*left:40%;*/
+}
+.txt_tab{
+  padding:8px;
+}
+#menu ul li a.hover_tab{
+  background-color:#dbe4ea;
+  color:#0b5394;
+}
